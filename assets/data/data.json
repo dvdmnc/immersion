@@ -1,0 +1,24 @@
+{
+  "menu": [
+    {
+      "title": "Entrée 1",
+      "subtitle": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+      "image": "../assets/images/6154401.webp"
+    },
+    {
+      "title": "Plat Principal",
+      "subtitle": "Incididunt ut labore et dolore magna aliqua.",
+      "image": "../assets/images/6154401.webp"
+    },
+    {
+      "title": "Fromage",
+      "subtitle": "Ut enim ad minim veniam, quis nostrud exercitation.",
+      "image": "../assets/images/6154401.webp"
+    },
+    {
+      "title": "Dessert",
+      "subtitle": "Sed do eiusmod tempor incididunt ut labore.",
+      "image": "../assets/images/6154401.webp"
+    }
+  ]
+}
