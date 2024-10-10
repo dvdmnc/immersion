@@ -1,50 +1,129 @@
-import React from "react";
-import {Animated, StyleSheet, TouchableOpacity, Text, Button} from "react-native";
+import React, {useEffect, useState} from "react";
+import {Animated, StyleSheet, TouchableOpacity, Text, Button, TextInput, ImageBackground} from "react-native";
 import View = Animated.View;
+import useMenu from "@/hooks/useMenu";
+
+
+const MenuCreateForm = () => {
+  const { addMenuItem } = useMenu();
+  const [title, setTitle] = useState("");
+  const [subtitle, setSubtitle] = useState("");
+  const [image, setImage] = useState("");
+
+  const handleCreate = () => {
+    const newItem = { title, subtitle, image };
+    addMenuItem(newItem);
+    setTitle("");
+    setSubtitle("");
+    setImage("");
+  };
+  return (
+      <View
+          style={{
+            backgroundColor: "white",
+            padding: 20,
+            borderRadius: 10,
+            marginBottom: 20,
+            position: 'absolute',
+            shadowColor: "#000",
+            shadowOffset: {
+              width: 0,
+              height: 2
+            },
+            shadowOpacity: 0.25,
+            shadowRadius: 3.84,
+          }}
+      >
+        <Text>Menu Create Form</Text>
+        <TextInput
+            style={styles.field}
+            placeholder="Title"
+            value={title}
+            onChangeText={setTitle}
+        />
+        <TextInput
+            style={styles.field}
+            placeholder="Subtitle"
+            value={subtitle}
+            onChangeText={setSubtitle}
+        />
+        <TextInput
+            style={styles.field}
+            placeholder="Image URL"
+            value={image}
+            onChangeText={setImage}
+        />
+        <Button title="Create" onPress={()=>{
+          handleCreate();
+          window.location.reload();
+        }}/>
+      </View>
+  );
+}
 
 export default function AdminPage() {
 
-  const [plats, setPlats] = React.useState([]);
+  const {menu, addMenuItem, deleteMenuItem} = useMenu();
+  const [showForm, setShowForm] = useState(false);
 
-
-
-
+  useEffect(() => {}, []);
 
   return (
       <View style={styles.container}>
         <Text style={styles.header}>Admin Dashboard</Text>
-
         <View style={styles.grid}>
-          <View>
-            <TouchableOpacity style={styles.tile}/>
-            <Text style={styles.tileText}>Menu</Text>
-          </View>
+        <View>
+          <ImageBackground
+              source={{uri: "https://img.freepik.com/premium-vector/food-menu-food-recipe-logo-design-template-spoon-fork-with-old-paper-scroll-vintage-vector_567423-1075.jpg"}}
+              style={styles.tile}
+              imageStyle={{ borderRadius: 10 }} // To ensure image fits with rounded corners
+          >
+          </ImageBackground>
+          <Text style={styles.tileText}>Menu</Text>
 
-          <View>
-            <TouchableOpacity style={styles.tile}/>
-            <Text style={styles.tileText}>Avis</Text>
-            </View>
+        </View>
+        <View>
+          <ImageBackground
+              source={{uri: "https://img.netty.fr/laroque/assets/teaserbox2462893046.png"}}
+              style={styles.tile}
+              imageStyle={{ borderRadius: 10 }} // To ensure image fits with rounded corners
+          >
 
-          <View>
-            <TouchableOpacity style={styles.tile}/>
-            <Text style={styles.tileText}>Plat</Text>
-          </View>
-          <View>
-            <TouchableOpacity style={styles.tile}/>
-            <Text style={styles.tileText}>Dessert</Text>
-          </View>
+          </ImageBackground>
+          <Text style={styles.tileText}>Avis</Text>
         </View>
 
-        <TouchableOpacity onPress={()=>{
-            console.log('click')
-        }} style={styles.addButton}>
+
+
+
+          {menu.map((item, index) => (
+              <View key={index}>
+                <ImageBackground
+                    source={{ uri: item.image }}
+                    style={styles.tile}
+                    imageStyle={{ borderRadius: 10 }} // To ensure image fits with rounded corners
+                >
+                </ImageBackground>
+                <Text style={styles.tileText}>{item.title}</Text>
+
+                <TouchableOpacity
+                    style={styles.deleteButton}
+                    onPress={() => {
+                      deleteMenuItem(index);
+                      window.location.reload();
+                    }}
+                >
+                  <Text style={styles.deleteText}>-</Text>
+                </TouchableOpacity>
+              </View>
+          ))}
+        </View>
+
+        <TouchableOpacity onPress={() => { setShowForm(!showForm) }} style={styles.addButton}>
           <Text style={styles.addText}>+</Text>
         </TouchableOpacity>
 
-
-        <TouchableOpacity style={styles.startButton}>
-          <Text style={styles.startText}>Démarrer</Text>
-        </TouchableOpacity>
+        {showForm && <MenuCreateForm/>}
       </View>
   );
 }
@@ -78,10 +157,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginVertical: 10,
     borderRadius: 10,
+    overflow: 'hidden', // To make sure the image stays within rounded corners
   },
   tileText: {
     color: 'white',
     fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    padding: 5,
+    borderRadius: 5,
   },
   addButton: {
     marginBottom: 20,
@@ -90,21 +174,32 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    color: 'black'
+    backgroundColor: '#d3d3d3',
   },
   addText: {
     color: 'black',
     fontSize: 40,
   },
-  startButton: {
-    backgroundColor: '#d3d3d3',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
+  deleteButton: {
+    backgroundColor: 'red',
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 5,
   },
-  startText: {
-    color: 'black',
+  deleteText: {
+    color: 'white',
     fontSize: 18,
     fontWeight: 'bold',
   },
+  field: {
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: 'black',
+    borderRadius: 5,
+    padding: 10,
+    width: '100%',
+  }
 });
