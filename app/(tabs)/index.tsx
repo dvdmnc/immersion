@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Animated, StyleSheet, TouchableOpacity, Text, Button, TextInput, ImageBackground} from "react-native";
+import {Animated, StyleSheet, TouchableOpacity, Text, Button, TextInput, ImageBackground, Image} from "react-native";
 import View = Animated.View;
 import useMenu from "@/hooks/useMenu";
 
@@ -17,6 +17,7 @@ const MenuCreateForm = () => {
     setSubtitle("");
     setImage("");
   };
+
   return (
       <View
           style={{
@@ -34,6 +35,8 @@ const MenuCreateForm = () => {
             shadowRadius: 3.84,
           }}
       >
+
+
         <Text>Menu Create Form</Text>
         <TextInput
             style={styles.field}
@@ -53,10 +56,21 @@ const MenuCreateForm = () => {
             value={image}
             onChangeText={setImage}
         />
-        <Button title="Create" onPress={()=>{
+        <button style={{
+            backgroundColor: '#ffd700',
+            padding: 10,
+            borderRadius: 5,
+            width: '100%',
+            textAlign: 'center',
+            color: 'black',
+            fontSize: 16,
+            fontWeight: 'bold',
+            marginBottom: 10,
+        }} title="Create" onClick={()=>{
           handleCreate();
           window.location.reload();
-        }}/>
+        }}> Créer </button>
+
       </View>
   );
 }
@@ -68,8 +82,15 @@ export default function AdminPage() {
 
   useEffect(() => {}, []);
 
+
   return (
+      <>
+      <Image
+          source={{ uri: "../../assets/images/background.jpg" }}
+          style={styles.backgroundImage}
+      />
       <View style={styles.container}>
+
         <Text style={styles.header}>Admin Dashboard</Text>
         <View style={styles.grid}>
         <View>
@@ -104,43 +125,58 @@ export default function AdminPage() {
                     imageStyle={{ borderRadius: 10 }} // To ensure image fits with rounded corners
                 >
                 </ImageBackground>
-                <Text style={styles.tileText}>{item.title}</Text>
+                <View style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    width: '100%',
+                    alignItems: 'center'
+                }}>
+                  <Text style={styles.tileText}>{item.title}</Text>
 
-                <TouchableOpacity
-                    style={styles.deleteButton}
-                    onPress={() => {
-                      deleteMenuItem(index);
-                      window.location.reload();
-                    }}
-                >
-                  <Text style={styles.deleteText}>-</Text>
-                </TouchableOpacity>
+                  <TouchableOpacity
+                      style={styles.deleteButton}
+                      onPress={() => {
+                        deleteMenuItem(index);
+                        window.location.reload();
+                      }}
+                  >
+                    -
+                  </TouchableOpacity>
+                </View>
+
               </View>
           ))}
         </View>
 
         <TouchableOpacity onPress={() => { setShowForm(!showForm) }} style={styles.addButton}>
-          <Text style={styles.addText}>+</Text>
+         +
         </TouchableOpacity>
 
         {showForm && <MenuCreateForm/>}
+
+
       </View>
+      </>
+
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#505050',
+    backgroundColor: '#000000',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
+    position: 'absolute',
+    opacity: 0.8,
+    width: '100vw',
+    height: '100vh',
   },
   header: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: 'white',
     marginBottom: 20,
+    color: '#ffd700'
   },
   grid: {
     flexDirection: 'row',
@@ -174,20 +210,24 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#d3d3d3',
+    backgroundColor: '#ffd700',
+    fontSize: 40,
   },
   addText: {
     color: 'black',
     fontSize: 40,
+    alignSelf: 'center',
+    alignItems: 'center',
   },
   deleteButton: {
-    backgroundColor: 'red',
+    backgroundColor: '#ff4646',
     width: 30,
     height: 30,
     borderRadius: 15,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 5,
+    fontSize: 29,
   },
   deleteText: {
     color: 'white',
@@ -201,5 +241,16 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 10,
     width: '100%',
-  }
+
+  },
+  backgroundImage: {
+    width: '100vw',
+    height: '100vh',
+    opacity: 0.1,
+  },
+  backgroundImageStyle: {
+    opacity: 0.1,
+    resizeMode: 'repeat',
+  },
+
 });
