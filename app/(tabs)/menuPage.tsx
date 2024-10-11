@@ -1,50 +1,79 @@
-import React, { useRef, useEffect } from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, ImageSourcePropType, Animated, ImageBackground } from 'react-native';
+import React, { useRef } from 'react';
+import { View, Text, StyleSheet,Image, ScrollView, ImageBackground } from 'react-native';
+import { GLView } from 'expo-gl';
 import { Asset } from 'expo-asset';
+import { Renderer } from 'expo-three';
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
 const backgroundImage = Asset.fromModule(require('../../assets/images/background.jpg')).uri;
+const entreeModel = '../../assets/images/entree.glb';
+const foodModel = '../../assets/images/food.glb';
+const ramenModel = '../../assets/images/Ramen.glb';
+const dessertModel = '../../assets/images/dessert.glb';
 
-interface MenuItemProps {
-  title: string;
-  subtitle: string;
-  imageSource: ImageSourcePropType;
-  animatedStyle?: Animated.AnimatedProps<any>;
-}
+const ModelDisplay = ({ modelPath, title, subtitle }) => {
+  const modelRef = useRef(null);
 
-const MenuItem: React.FC<MenuItemProps> = ({ title, subtitle, imageSource, animatedStyle }) => (
-  <View style={styles.menuItemContainer}>
-    <View style={styles.menuItem}>
-      <Animated.Image source={imageSource} style={[styles.menuItemImage, animatedStyle]} />
+  const onContextCreate = async (gl) => {
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, gl.drawingBufferWidth / gl.drawingBufferHeight, 0.1, 1000);
+
+    camera.position.z = 5;
+
+    const renderer = new Renderer({ gl });
+    renderer.setSize(gl.drawingBufferWidth, gl.drawingBufferHeight);
+
+    const light = new THREE.AmbientLight(0xffffff, 3);
+    scene.add(light);
+
+    const loader = new GLTFLoader();
+    loader.load(
+      modelPath,
+      (gltf) => {
+        modelRef.current = gltf.scene;
+
+        const box = new THREE.Box3().setFromObject(gltf.scene);
+        const center = box.getCenter(new THREE.Vector3());
+        gltf.scene.position.sub(center);
+
+        const scale = 8 / box.getSize(new THREE.Vector3()).length();
+        gltf.scene.scale.set(scale, scale, scale);
+        gltf.scene.rotation.x = Math.PI / 8;
+
+        scene.add(gltf.scene);
+      },
+      undefined,
+      (error) => {
+        console.error('Error loading the GLB model:', error);
+      }
+    );
+
+    const renderScene = () => {
+      requestAnimationFrame(renderScene);
+
+      if (modelRef.current) {
+        modelRef.current.rotation.y += 0.005;
+      }
+
+      renderer.render(scene, camera);
+      gl.endFrameEXP();
+    };
+    renderScene();
+  };
+
+  return (
+    <View style={styles.menuItemContainer}>
+      <GLView style={styles.glView} onContextCreate={onContextCreate} />
       <View style={styles.menuItemText}>
         <Text style={styles.menuItemTitle}>{title}</Text>
         <Text style={styles.menuItemSubtitle}>{subtitle}</Text>
       </View>
     </View>
-  </View>
-);
+  );
+};
 
 const MenuScreen = () => {
-  const rotationValue = useRef(new Animated.Value(0)).current;
-
-  useEffect(() => {
-    Animated.loop(
-      Animated.timing(rotationValue, {
-        toValue: 1,
-        duration: 5000,
-        useNativeDriver: true,
-      })
-    ).start();
-  }, [rotationValue]);
-
-  const rotation = rotationValue.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['0deg', '360deg'],
-  });
-
-  const animatedStyle = {
-    transform: [{ rotateY: rotation }],
-  };
-
   return (
     <ImageBackground 
       source={{ uri: backgroundImage }}
@@ -52,35 +81,30 @@ const MenuScreen = () => {
       imageStyle={styles.backgroundImageStyle}
     >
       <ScrollView contentContainerStyle={styles.container}>
-        <Image source={require('../../assets/images/logo.png')} style={styles.logo} />
-
+      <Image source={require('../../assets/images/logo.png')} style={styles.logo} />
         <View style={styles.content}>
           <Text style={styles.title}>Bienvenue à notre expérience culinaire immersive!</Text>
           <Text style={styles.subtitle}>Veuillez mettre votre téléphone en mode "Ne pas déranger" pour une expérience agréable.</Text>
           
-          <MenuItem 
+          <ModelDisplay 
+            modelPath={entreeModel}
             title="Entrée" 
             subtitle="Frites" 
-            imageSource={require('../../assets/images/6154401.webp')} 
-            animatedStyle={animatedStyle}
           />
-          <MenuItem 
+          <ModelDisplay 
+            modelPath={foodModel}
             title="Plat principale" 
             subtitle="Burger" 
-            imageSource={require('../../assets/images/6154401.webp')} 
-            animatedStyle={animatedStyle}
           />
-          <MenuItem 
-            title="Fromage" 
-            subtitle="Fromage" 
-            imageSource={require('../../assets/images/6154401.webp')} 
-            animatedStyle={animatedStyle}
+          <ModelDisplay 
+            modelPath={ramenModel}
+            title="Plat Secondaire" 
+            subtitle="Ramen" 
           />
-          <MenuItem 
+          <ModelDisplay 
+            modelPath={dessertModel}
             title="Dessert" 
             subtitle="Cake" 
-            imageSource={require('../../assets/images/6154401.webp')} 
-            animatedStyle={animatedStyle}
           />
         </View>
       </ScrollView>
@@ -99,13 +123,6 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     paddingTop: 50,
-  },
-  logo: {
-    width: '100%',
-    height: 70,
-    resizeMode: 'contain',
-    alignSelf: 'center',
-    marginBottom: 20,
   },
   content: {
     padding: 30,
@@ -127,26 +144,28 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontStyle: 'italic',
   },
+  logo: {
+    width: '100%',
+    height: 70,
+    resizeMode: 'contain',
+    alignSelf: 'center',
+    marginBottom: 20,
+  },
   menuItemContainer: {
     marginBottom: 20,
     padding: 10,
     borderWidth: 2,
     borderColor: '#ffd700',
-    backgroundColor:'#0006',
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
     borderRadius: 15,
   },
-  menuItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  menuItemImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 10,
-    marginRight: 15,
+  glView: {
+    width: '100%',
+    height: 200,
+    marginBottom: 10,
   },
   menuItemText: {
-    flex: 1,
+    alignItems: 'center',
   },
   menuItemTitle: {
     fontSize: 22,
