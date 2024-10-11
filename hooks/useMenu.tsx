@@ -7,6 +7,7 @@ interface MenuItem {
   title: string;
   subtitle: string;
   image: string;
+  url: string;
 }
 
 const useMenu = () => {

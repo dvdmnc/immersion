@@ -1,11 +1,13 @@
 import React from 'react'
 import { View, StyleSheet, Image, TextInput } from 'react-native'
+import BackButton from "../../../components/BackButton";
 
 function Details() {
   return (
     <>
     <Image source={require('../../../assets/images/background.jpg')} style={styles.backgroundImg}/>
       <View style={styles.container}>
+        <BackButton />
         <h1 style={styles.Title}>Admin Dashboard</h1>
         <View style={styles.content}>
           <TextInput type='text' placeholder='Titre'  placeholderTextColor={'black'} style={styles.input}/>

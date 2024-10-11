@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, Animated, Easing, ImageBackground } from 'react-native';
 import { RadioButton } from 'react-native-paper';
 import { Asset } from 'expo-asset';
+import BackButton from "@/components/BackButton";
 
 
 const backgroundImage = Asset.fromModule(require('../../assets/images/background.jpg')).uri;
@@ -57,6 +58,7 @@ const DetailPage = () => {
       imageStyle={styles.backgroundImageStyle}
     >
       <ScrollView contentContainerStyle={styles.container}>
+        <BackButton />
         <Animated.Image
          source={{ uri: burgerImage }}
           style={[
@@ -106,6 +108,51 @@ const DetailPage = () => {
             <Text style={styles.hint}>Hint: Ask invite number 5 for help!</Text>
           </View>
         </View>
+
+        <View
+            style={{
+                display: 'flex',
+                flexDirection: 'row',
+                padding: 20,
+                backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                borderRadius: 15,
+                margin: 10,
+              justifyContent: 'center',
+                alignItems: 'center',
+              flexWrap: 'wrap',
+            }}
+        >
+          //Make two button with arrows going left and right
+          <button title={"Back"} onClick={() => {
+            window.history.back();
+
+          }
+            }
+            style={{
+              backgroundColor: '#ffd700',
+              color: 'white',
+              fontSize: '40px',
+              fontWeight: 'bold',
+              padding: '10px',
+              borderRadius: '5px',
+              cursor: 'pointer',
+            }}
+            > ← </button>
+            <button title={"Next"} onClick={() => {
+                window.history.forward();
+            }
+            }
+            style={{
+              backgroundColor: '#ffd700',
+              color: 'white',
+              fontSize: '40px',
+              fontWeight: 'bold',
+              padding: '10px',
+              borderRadius: '5px',
+            }}
+            > → </button>
+
+        </View>
       </ScrollView>
     </ImageBackground>
   );
@@ -114,6 +161,10 @@ const DetailPage = () => {
 const styles = StyleSheet.create({
   backgroundImage: {
     flex: 1,
+    backgroundColor: 'black',
+    opacity: 0.8,
+
+
   },
   backgroundImageStyle: {
     opacity: 0.1,

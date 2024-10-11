@@ -9,13 +9,14 @@ const MenuCreateForm = () => {
   const [title, setTitle] = useState("");
   const [subtitle, setSubtitle] = useState("");
   const [image, setImage] = useState("");
-
+  const [url, setUrl] = useState("");
   const handleCreate = () => {
-    const newItem = { title, subtitle, image };
+    const newItem = { title, subtitle, image,url };
     addMenuItem(newItem);
     setTitle("");
     setSubtitle("");
     setImage("");
+    setUrl("");
   };
 
   return (
@@ -93,17 +94,20 @@ export default function AdminPage() {
 
         <Text style={styles.header}>Admin Dashboard</Text>
         <View style={styles.grid}>
-        <View>
-          <ImageBackground
-              source={{uri: "https://img.freepik.com/premium-vector/food-menu-food-recipe-logo-design-template-spoon-fork-with-old-paper-scroll-vintage-vector_567423-1075.jpg"}}
-              style={styles.tile}
-              imageStyle={{ borderRadius: 10 }} // To ensure image fits with rounded corners
-          >
-          </ImageBackground>
-          <Text style={styles.tileText}>Menu</Text>
+          <View>
+            <a href={"menuPage"}>
+              <ImageBackground
+                  source={{uri: "https://img.freepik.com/premium-vector/food-menu-food-recipe-logo-design-template-spoon-fork-with-old-paper-scroll-vintage-vector_567423-1075.jpg"}}
+                  style={styles.tile}
+                  imageStyle={{borderRadius: 10}} // To ensure image fits with rounded corners
+              >
+              </ImageBackground>
+            </a>
+              <Text style={styles.tileText}>Menu</Text>
 
-        </View>
-        <View>
+          </View>
+          <View>
+          <a href={"AvisPage"}>
           <ImageBackground
               source={{uri: "https://img.netty.fr/laroque/assets/teaserbox2462893046.png"}}
               style={styles.tile}
@@ -111,6 +115,7 @@ export default function AdminPage() {
           >
 
           </ImageBackground>
+          </a>
           <Text style={styles.tileText}>Avis</Text>
         </View>
 
@@ -119,12 +124,16 @@ export default function AdminPage() {
 
           {menu.map((item, index) => (
               <View key={index}>
+                <a href={"/details"}>
+
+
                 <ImageBackground
                     source={{ uri: item.image }}
                     style={styles.tile}
                     imageStyle={{ borderRadius: 10 }} // To ensure image fits with rounded corners
                 >
                 </ImageBackground>
+                </a>
                 <View style={{
                     flexDirection: 'row',
                     justifyContent: 'space-between',
@@ -150,6 +159,20 @@ export default function AdminPage() {
 
         <TouchableOpacity onPress={() => { setShowForm(!showForm) }} style={styles.addButton}>
          +
+        </TouchableOpacity>
+
+        <TouchableOpacity  style={{
+          backgroundColor: '#ffd700',
+          padding: 10,
+          borderRadius: 5,
+          width: '100%',
+          textAlign: 'center',
+        }}
+        onPress={() => {
+          window.location.href = "/detailsPage";
+        }}
+        >
+          Lancer
         </TouchableOpacity>
 
         {showForm && <MenuCreateForm/>}

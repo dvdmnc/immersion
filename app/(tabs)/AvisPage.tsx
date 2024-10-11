@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ImageBackground,  StyleSheet, Image} from 'react-native';
+import BackButton from "@/components/BackButton";
 
 const styles = StyleSheet.create({
   image: {
@@ -75,8 +76,11 @@ const AvisPage = () => {
 
   return (
     <>
+
       <Image source={require("../../assets/images/mondrian.png")} style={styles.image}/>
+
       <div style={{ padding: '20px', maxWidth: '400px', margin: '0 auto', display: "flex", flexDirection: "column", justifyContent:"center", height:"100vh", opacity:"0.8", backgroundColor:"black", position:"absolute"}}>
+        <BackButton />
         <h1 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '20px', color: "white", display: "flex", justifyContent: "center" }}>Laissez-nous un avis</h1>
         
         {submitted && (

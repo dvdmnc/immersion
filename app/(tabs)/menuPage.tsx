@@ -91,6 +91,8 @@ const MenuScreen = () => {
 const styles = StyleSheet.create({
   backgroundImage: {
     flex: 1,
+    backgroundColor: 'black',
+    opacity: 0.8,
   },
   backgroundImageStyle: {
     opacity: 0.1,
